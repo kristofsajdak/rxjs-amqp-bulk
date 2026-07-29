@@ -1,23 +1,40 @@
-rabbit:
-  hostname: rabbit
-  image: rabbitmq:3-management
-  ports:
-    - "5672:5672"
-    - "15672:15672"
-  restart: always
+services:
 
-mongo1:
-  hostname: mongo1
-  image: mongo:3
-  entrypoint: [ "mongod", "--journal", "--smallfiles", "--rest" ]
-  ports:
-    - "27017:27017"
-    - "28017:28017"
-  restart: always
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
-elasticsearch:
-  image: elasticsearch:latest
-  command: elasticsearch -Des.network.host=0.0.0.0
-  ports:
-    - "9200:9200"
-    - "9300:9300"
+  mongo1:
+    hostname: mongo1
+    image: mongo:3
+    # --bind_ip_all is required on mongo 3.6+, which binds to localhost by default
+    entrypoint: [ "mongod", "--journal", "--smallfiles", "--bind_ip_all" ]
+    ports:
+      - "27017:27017"
+
+  # pinned: the index mapping uses "type": "string" / not_analyzed, removed in ES 5
+  elasticsearch:
+    image: elasticsearch:2.4.6
+    command: elasticsearch -Des.network.host=0.0.0.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  # test runner; the code targets node 4
+  tests:
+    image: node:4
+    working_dir: /app
+    volumes:
+      - ..:/app
+    environment:
+      AMQP_URL: "amqp://rabbit:5672"
+      ES_URL: "http://elasticsearch:9200"
+      MONGODB_URL: "mongodb://mongo1/test"
+    depends_on:
+      - rabbit
+      - mongo1
+      - elasticsearch
+    command: [ "sleep", "infinity" ]

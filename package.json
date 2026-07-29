@@ -1,16 +1,20 @@
 {
   "name": "rxjs-amqp-bulk",
   "version": "1.0.0",
-  "description": "",
+  "description": "Experiment using amqplib and rxjs to scale out data processing and insert into Elasticsearch",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test"
   },
   "engines": {
     "node": "4"
   },
-  "author": "",
+  "author": "Kristof Sajdak",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kristofsajdak/rxjs-amqp-bulk.git"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
@@ -20,7 +24,7 @@
     "tp": "^0.1.0"
   },
   "dependencies": {
-    "amqp-connection-manager": "^1.3.1",
+    "amqp-connection-manager": "1.3.1",
     "amqplib": "^0.4.1",
     "bluebird": "^3.3.1",
     "hapi": "^13.0.0",
